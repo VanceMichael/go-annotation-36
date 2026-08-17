@@ -55,9 +55,8 @@ func (a *Allocator) Allocate(satelliteID string, band model.Band, mhz int) (Gran
 		return Grant{}, fmt.Errorf("%w: 申请带宽必须为正", model.ErrInvalidGrant)
 	}
 
-	// 申请路径以读取剩余带宽为主，改用读锁提高并发吞吐
-	a.mu.RLock()
-	defer a.mu.RUnlock()
+	a.mu.Lock()
+	defer a.mu.Unlock()
 
 	if a.usedMHz[i]+mhz > band.TotalMHz() {
 		a.rejects++
